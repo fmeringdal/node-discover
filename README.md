@@ -13,10 +13,8 @@ Duplicate keys are reported as error and the provider is determined through the
 
 ### Supported Providers
 
-The following cloud providers have implementations in the node-discover/provider
-sub packages. Additional providers can be added through the
-[Register](https://godoc.org/github.com/hashicorp/go-discover#Register)
-function.
+The following cloud providers have implementations in the node-discover/src/providers
+package.
 
  * Amazon AWS [Config options](https://github.com/hashicorp/go-discover/blob/master/provider/aws/aws_discover.go#L19-L33)
  * DigitalOcean [Config options](https://github.com/hashicorp/go-discover/blob/master/provider/digitalocean/digitalocean_discover.go#L16-L24)
