@@ -16,6 +16,7 @@ pub enum AddrType {
     PublicV6,
 }
 
+// TODO: maybe just use serde instead
 impl TryFrom<String> for AddrType {
     type Error = DiscoverError;
 
