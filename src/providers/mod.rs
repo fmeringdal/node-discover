@@ -14,5 +14,5 @@ pub trait Provider: TryFrom<ParsedArgs> + Send + Sync {
     /// That means which attributes are available and what the value of those
     /// attributes can be. Any other information that the user of this
     /// provider needs to know should also be explained.
-    fn help() -> String;
+    fn help() -> &'static str;
 }

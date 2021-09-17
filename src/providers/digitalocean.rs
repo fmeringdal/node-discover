@@ -194,7 +194,7 @@ impl Provider for DOProvider {
         Ok(addrs)
     }
 
-    fn help() -> String {
+    fn help() -> &'static str {
         "DigitalOcean:
 
 	provider:  \"digitalocean\"
@@ -202,6 +202,5 @@ impl Provider for DOProvider {
 	tag_name:  The tag name to filter on
 	api_token: The DigitalOcean API token to use
 "
-        .to_string()
     }
 }

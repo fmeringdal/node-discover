@@ -246,7 +246,7 @@ impl Provider for AWSProvider {
         Ok(addrs)
     }
 
-    fn help() -> String {
+    fn help() -> &'static str {
         "Amazon AWS:
 
 	provider:          \"aws\"
@@ -261,6 +261,5 @@ impl Provider for AWSProvider {
 	running on AWS instance it is recommended you use an IAM role, otherwise it is
 	recommended you make a dedicated IAM user and access key used only for auto-joining.
 	"
-        .to_string()
     }
 }
