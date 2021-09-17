@@ -1,6 +1,6 @@
 [package]
 name = "node-discover"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 description = "Discover nodes in cloud environments"
 license = "MIT"
@@ -33,6 +33,6 @@ name = "node_discover"
 path = "src/lib.rs"
 
 [[bin]]
-name = "node_discover"
+name = "node-discover"
 path = "src/bin.rs"
 #required-features = ["full"]

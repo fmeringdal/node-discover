@@ -90,79 +90,29 @@ provider=k8s label_selector="app = consul-server"
 Install the command line tool with:
 
 ```
-go get -u github.com/hashicorp/go-discover/cmd/discover
+cargo install node-discover
 ```
 
 Then run it with:
 
 ```
-$ discover addrs provider=aws region=eu-west-1 ...
+$ node-discover help
+$ node-discover help aws
+$ node-discover addrs provider=aws region=eu-west-1 ...
 ```
 
 ## Library Usage
 
-Install the library with:
-
-```
-go get -u github.com/hashicorp/go-discover
-```
-
-You can then either support discovery for all available providers
-or only for some of them.
-
-```go
-// support discovery for all supported providers
-d := discover.Discover{}
-
-// support discovery for AWS and GCE only
-d := discover.Discover{
-	Providers : map[string]discover.Provider{
-		"aws": discover.Providers["aws"],
-		"gce": discover.Providers["gce"],
-	}
-}
-
-// use ioutil.Discard for no log output
-l := log.New(os.Stderr, "", log.LstdFlags)
-
-cfg := "provider=aws region=eu-west-1 ..."
-addrs, err := d.Addrs(cfg, l)
-```
-
-You can also add support for providers that aren't registered by default:
-
-```go
-// Imports at top of file
-import "github.com/hashicorp/go-discover/provider/k8s"
-
-// support discovery for all supported providers
-d := discover.Discover{}
-
-// support discovery for AWS and GCE only
-d := discover.Discover{
-	Providers : map[string]discover.Provider{
-		"k8s": &k8s.Provider{},
-	}
-}
-
-// ...
-```
-
 For complete API documentation, see
-[GoDoc](https://godoc.org/github.com/hashicorp/go-discover). The configuration
-for the supported providers is documented in the
-[providers](https://godoc.org/github.com/hashicorp/go-discover/provider)
-sub-package.
+[docs.rs](https://docs.rs/node-discover).
+[crates.io](https://crates.io/crates/node-discover)
 
 ## Testing
-
-**Note: Due to the `go.sum` checksum errors referenced in [#68](https://github.com/hashicorp/go-discover/issues/68), 
-you will need Go 1.11.4+ to build/test go-discover.**
 
 Configuration tests can be run with Go:
 
 ```
-$ go test ./...
+$ cargo test
 ```
 
 By default tests that communicate with providers do not run unless credentials
@@ -172,19 +122,19 @@ environment variables.
 **Note: This will make real API calls to the account provided by the credentials.**
 
 ```
-$ AWS_ACCESS_KEY_ID=... AWS_ACCESS_KEY_SECRET=... AWS_REGION=... go test -v ./provider/aws
+$ AWS_ACCESS_KEY_ID=... AWS_ACCESS_KEY_SECRET=... AWS_REGION=... cargo test
 ```
 
 This requires resources to exist that match those specified in tests
 (eg instance tags in the case of AWS). To create these resources,
 there are sets of [Terraform](https://www.terraform.io) configuration
-in the `test/tf` directory for supported providers.
+in the `tests/tf` directory for supported providers.
 
 You must use the same account and access credentials above. The same
 environment variables should be applicable and read by Terraform.
 
 ```
-$ cd test/tf/aws
+$ cd tests/tf/aws
 $ export AWS_ACCESS_KEY_ID=... AWS_ACCESS_KEY_SECRET=... AWS_REGION=...
 $ terraform init
 ...
@@ -197,13 +147,13 @@ run the tests, assuming you have exported credentials into
 your environment:
 
 ```
-$ go test -v ./provider/aws
+$ cargo test
 ```
 
 To destroy the resources you need to use Terraform again:
 
 ```
-$ cd test/tf/aws
+$ cd tests/tf/aws
 $ terraform destroy
 ...
 ```
@@ -211,85 +161,3 @@ $ terraform destroy
 **Note: There should be no requirements to create and test these resources other
 than credentials and Terraform. This is to ensure tests can run in development
 and CI environments consistently across all providers.**
-
-## Retrieving Test Credentials
-
-Below are instructions for retrieving credentials in order to run
-tests for some of the providers.
-
-<details>
-  <summary>Google Cloud</summary>
-
-1. Go to https://console.cloud.google.com/
-1. IAM &amp; Admin / Settings:
-    * Create Project, e.g. `discover`
-    * Write down the `Project ID`, e.g. `discover-xxx`
-1. Billing: Ensure that the project is linked to a billing account
-1. API Manager / Dashboard: Enable the following APIs
-    * Google Compute Engine API
-1. IAM &amp; Admin / Service Accounts: Create Service Account
-    * Service account name: `admin`
-    * Roles:
-        * `Project/Service Account Actor`
-        * `Compute Engine/Compute Instance Admin (v1)`
-        * `Compute Engine/Compute Security Admin`
-    * Furnish a new private key: `yes`
-    * Key type: `JSON`
-1. The credentials file `discover-xxx.json` will have been downloaded
-   automatically to your machine
-1. Source the contents of the credentials file into the `GOOGLE_CREDENTIALS`
-   environment variable
-
-</details>
-
-<details>
-  <summary>Azure</summary>
-See also the [Terraform provider documentation](https://www.terraform.io/docs/providers/azurerm/index.html#creating-credentials).
-
-```shell
-# Install Azure CLI (https://github.com/Azure/azure-cli)
-curl -L https://aka.ms/InstallAzureCli | bash
-
-# 1. Login
-$ az login
-
-# 2. Get SubscriptionID
-$ az account list
-[
-  {
-    "cloudName": "AzureCloud",
-    "id": "subscription_id",
-    "isDefault": true,
-    "name": "Gratis versie",
-    "state": "Enabled",
-    "tenantId": "tenant_id",
-    "user": {
-      "name": "user@email.com",
-      "type": "user"
-    }
-  }
-]
-
-# 3. Switch to subscription
-$ az account set --subscription="subscription_id"
-
-# 4. Create ClientID and Secret
-$ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/subscription_id"
-{
-  "appId": "client_id",
-  "displayName": "azure-cli-2017-07-18-16-51-43",
-  "name": "http://azure-cli-2017-07-18-16-51-43",
-  "password": "client_secret",
-  "tenant": "tenant_id"
-}
-
-# 5. Export the Credentials for the client
-export ARM_CLIENT_ID=client_id
-export ARM_CLIENT_SECRET=client_secret
-export ARM_TENANT_ID=tenant_id
-export ARM_SUBSCRIPTION_ID=subscription_id
-
-# 6. Test the credentials
-$ az vm list-sizes --location 'West Europe'
-```
-</details>

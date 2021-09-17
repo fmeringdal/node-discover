@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::error;
 use node_discover::{aws::AWSProvider, digitalocean::DOProvider, get_addresses, Provider};
 
 const GLOBAL_HELP: &str = "The options for discovering ip addresses are provided as a
@@ -30,7 +30,7 @@ async fn get_addrs(args: Vec<String>) {
     let res = get_addresses(args).await;
 
     match res {
-        Ok(addrs) => info!("{:?}", addrs),
+        Ok(addrs) => println!("{:?}", addrs),
         Err(e) => {
             error!("Unable to retrieve addrs. Received error: {}", e);
         }
