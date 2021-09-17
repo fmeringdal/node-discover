@@ -107,7 +107,7 @@ For complete API documentation, see
 
 ## Testing
 
-Configuration tests can be run with Go:
+Configuration tests can be run with:
 
 ```
 $ cargo test
