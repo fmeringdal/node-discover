@@ -1,0 +1,10 @@
+discover
+gce/*.json
+tf_rsa
+tf_rsa.pub
+tf.log
+.terraform
+terraform.tfstate*
+.terraform.lock.hcl
+/target
+Cargo.lock

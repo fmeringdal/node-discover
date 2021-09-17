@@ -1,0 +1,38 @@
+[package]
+name = "node-discover"
+version = "0.1.0"
+edition = "2018"
+description = "Discover nodes in cloud environments"
+license = "MIT"
+repository = "https://github.com/fmeringdal/node-discover"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.51"
+tokio = { version = "1", features = ["rt"] }
+thiserror = "1.0.29"
+log = "0.4.14"
+env_logger = "0.9.0"
+reqwest = { version = "0.11", features = ["json"] }
+serde = "1.0.130"
+# aws
+rusoto_core = "0.47.0"
+rusoto_credential = "0.47.0"
+rusoto_ec2 = "0.47.0"
+# aws - end
+
+
+#[features]
+#aws = []
+#full = ["aws"]
+
+
+[lib]
+name = "node_discover"
+path = "src/lib.rs"
+
+[[bin]]
+name = "node_discover"
+path = "src/bin.rs"
+#required-features = ["full"]
