@@ -7,7 +7,6 @@
 //! #[tokio::main]
 //! async fn main() {
 //!     let args = "provider=digitalocean region=lon1 tag_name=cool-tag".to_string();
-//!     let args = args.split(" ").map(String::from).collect::<Vec<_>>();
 //!     let res = get_addresses(args).await;
 //!     match res {
 //!         Ok(addrs) => println!("{:?}", addrs),
@@ -23,7 +22,6 @@
 //! #[tokio::main]
 //! async fn main() {
 //!     let args = "provider=aws region=eu-west-1 tag_key=Name tag_value=cool-name addr_type=private_v4".to_string();
-//!     let args = args.split(" ").map(String::from).collect::<Vec<_>>();
 //!     let res = get_addresses(args).await;
 //!     match res {
 //!         Ok(addrs) => println!("{:?}", addrs),
@@ -44,7 +42,7 @@ use providers::aws::AWSProvider;
 use providers::digitalocean::DOProvider;
 pub use providers::*;
 
-pub async fn get_addresses(args: Vec<String>) -> Result<Vec<String>, DiscoverError> {
+pub async fn get_addresses(args: String) -> Result<Vec<String>, DiscoverError> {
     let args = ParsedArgs::try_from(args)?;
     match *args.provider() {
         SupportedProvider::AWS => {

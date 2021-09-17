@@ -17,7 +17,6 @@ pub async fn digitalocean_provider() {
         "provider=digitalocean region={} tag_name={} api_token={}",
         region, tag_name, api_token
     );
-    let args = args.split(" ").map(String::from).collect::<Vec<_>>();
     let res = get_addresses(args).await;
     assert!(res.is_ok());
     let addrs = res.unwrap();

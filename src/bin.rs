@@ -27,7 +27,7 @@ pub fn help(provider: &str) {
 }
 
 async fn get_addrs(args: Vec<String>) {
-    let res = get_addresses(args).await;
+    let res = get_addresses(args.join(" ")).await;
 
     match res {
         Ok(addrs) => println!("{:?}", addrs),

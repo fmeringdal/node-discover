@@ -19,7 +19,6 @@ pub async fn aws_provider() {
         "provider=aws region={} tag_key={} tag_value={}",
         region, tag_key, tag_value
     );
-    let args = args.split(" ").map(String::from).collect::<Vec<_>>();
     let res = get_addresses(args).await;
     assert!(res.is_ok());
     let addrs = res.unwrap();
