@@ -1,6 +1,6 @@
 [package]
 name = "node-discover"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2018"
 description = "Discover nodes in cloud environments"
 license = "MIT"
