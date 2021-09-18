@@ -10,7 +10,7 @@
 //!     let res = get_addresses(args).await;
 //!     match res {
 //!         Ok(addrs) => println!("{:?}", addrs),
-//!         Err(e) => println!("Error: {:?}", e),
+//!         Err(e) => println!("Error: {}", e),
 //!     };
 //! }
 //! ```
@@ -25,7 +25,7 @@
 //!     let res = get_addresses(args).await;
 //!     match res {
 //!         Ok(addrs) => println!("{:?}", addrs),
-//!         Err(e) => println!("Error: {:?}", e),
+//!         Err(e) => println!("Error: {}", e),
 //!     };
 //! }
 //! ```
