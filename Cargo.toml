@@ -23,7 +23,7 @@ rusoto_ec2 = { version = "0.47.0", optional = true }
 
 [features]
 aws = ["rusoto_core", "rusoto_ec2"]
-digitalocean = []
+digitalocean = ["reqwest"]
 full = ["aws", "digitalocean"]
 # default = ["full"]
 
