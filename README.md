@@ -101,6 +101,13 @@ $ node-discover addrs provider=aws region=eu-west-1 ...
 
 ## Library Usage
 
+Active providers in Cargo.toml
+```
+[dependencies]
+# Choose which providers you need in features list
+node-discover = { version = "x.y.z", features = ["digitalocean", "aws"] }
+```
+
 For complete API documentation, see
 [docs.rs](https://docs.rs/node-discover).
 [crates.io](https://crates.io/crates/node-discover)
