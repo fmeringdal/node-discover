@@ -73,15 +73,15 @@ impl TryFrom<Vec<String>> for ParsedArgs {
             }
         }
 
-        let provider = match args.get("provider") {
-            // provider must always be provided
-            None => return Err(DiscoverError::MissingArgument("provider".into())),
-            Some(p) => match &p.to_lowercase()[..] {
-                "aws" => SupportedProvider::AWS,
-                "digitalocean" => SupportedProvider::DigitalOcean,
-                _ => return Err(DiscoverError::UnsupportedProvider(p.to_string())),
-            },
-        };
+        let provider = args
+            .get("provider")
+            .ok_or_else(|| DiscoverError::MissingArgument("provider".into()))?;
+
+        // Format provider str to json so that we can use serde to find the SupportedProvider
+        // which is nicer than doing a match on &provider[..]
+        let provider_json = format!("\"{}\"", provider);
+        let provider = serde_json::from_str(&provider_json)
+            .map_err(|_| DiscoverError::UnsupportedProvider(provider.to_string()))?;
 
         Ok(Self {
             inner: args,
