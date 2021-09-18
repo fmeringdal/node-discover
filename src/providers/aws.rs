@@ -145,10 +145,10 @@ impl AWSProvider {
             self.region, self.tag_key, self.tag_value, self.addr_type
         );
 
-        client.describe_instances(input).await.map_err(|e| {
-            println!("Provider req failed: {:?}", e);
-            DiscoverError::ProviderRequestFailed(format!("{:?}", e))
-        })
+        client
+            .describe_instances(input)
+            .await
+            .map_err(|e| DiscoverError::ProviderRequestFailed(format!("{:?}", e)))
     }
 }
 
