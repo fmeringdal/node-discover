@@ -40,9 +40,9 @@ pub use args::SupportedProvider;
 use errors::DiscoverError;
 
 #[cfg(feature = "aws")]
-use providers::aws::AWSProvider;
+pub use providers::aws::AWSProvider;
 #[cfg(feature = "digitalocean")]
-use providers::digitalocean::DOProvider;
+pub use providers::digitalocean::DOProvider;
 pub use providers::*;
 
 pub async fn get_addresses(args: String) -> Result<Vec<String>, DiscoverError> {
