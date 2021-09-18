@@ -88,7 +88,6 @@ provider=k8s label_selector="app = consul-server"
 Install the command line tool with:
 
 ```
-# Choose which providers you need in features list
 cargo install node-discover --all-features
 ```
 
