@@ -10,22 +10,24 @@ repository = "https://github.com/fmeringdal/node-discover"
 
 [dependencies]
 async-trait = "0.1.51"
-tokio = { version = "1", features = ["rt"] }
+tokio = { version = "1", features = ["rt", "macros", "rt-multi-thread"] }
 thiserror = "1.0.29"
 log = "0.4.14"
 env_logger = "0.9.0"
 reqwest = { version = "0.11", features = ["json"] }
-serde = "1.0.130"
+serde = {version = "1.0.130", features = ["derive"] }
 serde_json = "1.0.68"
 # aws
-rusoto_core = "0.47.0"
-rusoto_ec2 = "0.47.0"
+rusoto_core = { version = "0.47.0", optional = true }
+rusoto_ec2 = { version = "0.47.0", optional = true }
 # aws - end
 
 
-#[features]
-#aws = []
-#full = ["aws"]
+[features]
+aws = ["rusoto_core", "rusoto_ec2"]
+digitalocean = []
+full = ["aws", "digitalocean"]
+# default = ["full"]
 
 
 [lib]
@@ -35,4 +37,4 @@ path = "src/lib.rs"
 [[bin]]
 name = "node-discover"
 path = "src/bin.rs"
-#required-features = ["full"]
+required-features = ["full"]

@@ -1,4 +1,6 @@
+#[cfg(feature = "aws")]
 pub mod aws;
+#[cfg(feature = "digitalocean")]
 pub mod digitalocean;
 
 use std::convert::TryFrom;

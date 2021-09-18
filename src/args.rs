@@ -79,12 +79,7 @@ impl TryFrom<Vec<String>> for ParsedArgs {
             Some(p) => match &p.to_lowercase()[..] {
                 "aws" => SupportedProvider::AWS,
                 "digitalocean" => SupportedProvider::DigitalOcean,
-                _ => {
-                    return Err(DiscoverError::MalformedArgument(
-                        "provider".to_string(),
-                        format!("{} is not a supported provider.", p),
-                    ))
-                }
+                _ => return Err(DiscoverError::UnsupportedProvider(p.to_string())),
             },
         };
 
@@ -110,53 +105,7 @@ impl TryFrom<String> for ParsedArgs {
 
 #[cfg(test)]
 mod test {
-    use crate::aws::{AWSProvider, AddrType};
-
     use super::*;
-
-    #[test]
-    fn aws_provider_from_string() {
-        let tag_key = "Name";
-        let tag_value = "fsajfopja";
-        let addr_type = "private_v4";
-
-        let args = format!(
-            "provider=aws region=eu-west-1 tag_key={} tag_value={} addr_type={}",
-            tag_key, tag_value, addr_type
-        );
-
-        let res = ParsedArgs::try_from(args);
-        assert!(res.is_ok());
-        let args = res.unwrap();
-        let res = AWSProvider::try_from(args);
-        assert!(res.is_ok());
-        let provider = res.unwrap();
-        assert_eq!(provider.tag_key(), tag_key);
-        assert_eq!(provider.tag_value(), tag_value);
-        assert_eq!(provider.addr_type(), &AddrType::PrivateV4);
-    }
-
-    #[test]
-    fn aws_provider_from_string_with_trailing_spaces() {
-        let tag_key = "Name";
-        let tag_value = "fsajfopja";
-        let addr_type = "private_v4";
-
-        let args = format!(
-            "  provider=aws region=eu-west-1 tag_key={} tag_value={} addr_type={}    ",
-            tag_key, tag_value, addr_type
-        );
-
-        let res = ParsedArgs::try_from(args);
-        assert!(res.is_ok());
-        let args = res.unwrap();
-        let res = AWSProvider::try_from(args);
-        assert!(res.is_ok());
-        let provider = res.unwrap();
-        assert_eq!(provider.tag_key(), tag_key);
-        assert_eq!(provider.tag_value(), tag_value);
-        assert_eq!(provider.addr_type(), &AddrType::PrivateV4);
-    }
 
     #[test]
     fn fail_when_provider_is_not_provided() {
@@ -189,22 +138,6 @@ mod test {
                 DiscoverError::DuplicateArgument("provider".to_string())
             );
         }
-    }
-
-    #[test]
-    fn fail_on_unexpected_argument() {
-        let unexpected_arg = "tag_keys".to_string();
-        let args = format!("provider=aws region=eu-west-1 {}=fasfjsa", unexpected_arg);
-
-        let parsed_args = ParsedArgs::try_from(args);
-        assert!(parsed_args.is_ok());
-
-        let res = AWSProvider::try_from(parsed_args.unwrap());
-        assert!(res.is_err());
-        assert_eq!(
-            res.unwrap_err(),
-            DiscoverError::UnexpectedArgument(unexpected_arg)
-        );
     }
 
     #[test]

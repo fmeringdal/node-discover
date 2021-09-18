@@ -38,7 +38,10 @@ use std::convert::TryFrom;
 use args::ParsedArgs;
 pub use args::SupportedProvider;
 use errors::DiscoverError;
+
+#[cfg(feature = "aws")]
 use providers::aws::AWSProvider;
+#[cfg(feature = "digitalocean")]
 use providers::digitalocean::DOProvider;
 pub use providers::*;
 
@@ -46,12 +49,22 @@ pub async fn get_addresses(args: String) -> Result<Vec<String>, DiscoverError> {
     let args = ParsedArgs::try_from(args)?;
     match *args.provider() {
         SupportedProvider::AWS => {
-            let p = AWSProvider::try_from(args)?;
-            p.addrs().await
+            #[cfg(feature = "aws")]
+            {
+                let p = AWSProvider::try_from(args)?;
+                return p.addrs().await;
+            }
+            #[allow(unreachable_code)]
+            Err(DiscoverError::UnsupportedProvider("aws".into()))
         }
         SupportedProvider::DigitalOcean => {
-            let p = DOProvider::try_from(args)?;
-            p.addrs().await
+            #[cfg(feature = "digitalocean")]
+            {
+                let p = DOProvider::try_from(args)?;
+                return p.addrs().await;
+            }
+            #[allow(unreachable_code)]
+            Err(DiscoverError::UnsupportedProvider("digitalocean".into()))
         }
     }
 }
