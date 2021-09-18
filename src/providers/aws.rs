@@ -5,15 +5,25 @@ use rusoto_ec2::{DescribeInstancesRequest, DescribeInstancesResult, Ec2, Ec2Clie
 
 use std::{convert::TryFrom, str::FromStr};
 
-use crate::args::ParsedArgs;
+use crate::{args::ParsedArgs, SupportedProvider};
 
 use super::{DiscoverError, Provider};
+use serde::Deserialize;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub enum AddrType {
+    #[serde(rename = "private_v4")]
     PrivateV4,
+    #[serde(rename = "public_v4")]
     PublicV4,
+    #[serde(rename = "public_v6")]
     PublicV6,
+}
+
+impl Default for AddrType {
+    fn default() -> Self {
+        Self::PrivateV4
+    }
 }
 
 // TODO: maybe just use serde instead
@@ -21,15 +31,13 @@ impl TryFrom<String> for AddrType {
     type Error = DiscoverError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
-        match &value[..] {
-            "public_v4" => Ok(AddrType::PublicV4),
-            "public_v6" => Ok(AddrType::PublicV6),
-            "private_v4" => Ok(AddrType::PrivateV4),
-            _ => Err(DiscoverError::MalformedArgument(
+        let json_value = format!("\"{}\"", value);
+        serde_json::from_str(&json_value).map_err(|_| {
+            DiscoverError::MalformedArgument(
                 format!("addr_type={}", value),
-                "Invalid addr_type".to_string(),
-            )),
-        }
+                format!("{} is not a valid addr_type. Valid addr_types are: private_v4, public_v4 and public_v6.", value)
+            )
+        })
     }
 }
 
@@ -48,7 +56,7 @@ impl TryFrom<ParsedArgs> for AWSProvider {
         let mut tag_key = None;
         let mut tag_value = None;
         let mut region = None;
-        let mut addr_type = AddrType::PrivateV4;
+        let mut addr_type = AddrType::default();
 
         for (key, value) in args {
             match &key[..] {
@@ -58,7 +66,7 @@ impl TryFrom<ParsedArgs> for AWSProvider {
                     region = Some(Region::from_str(&value).map_err(|_| {
                         DiscoverError::MalformedArgument(
                             format!("region={}", value),
-                            "The value is not a valid AWS Region".to_string(),
+                            format!("{} is not a valid AWS Region", value),
                         )
                     })?)
                 }
@@ -89,15 +97,12 @@ impl TryFrom<Vec<String>> for AWSProvider {
 
     fn try_from(value: Vec<String>) -> Result<Self, Self::Error> {
         let args = ParsedArgs::try_from(value)?;
-        match args.get("provider") {
-            None => Err(DiscoverError::MissingArgument("provider".into())),
-            Some(provider) => match &provider[..] {
-                "aws" => AWSProvider::try_from(args),
-                _ => Err(DiscoverError::MalformedArgument(
-                    format!("provider={}", provider),
-                    "you should not see this ...".to_string(),
-                )),
-            },
+        match *args.provider() {
+            SupportedProvider::AWS => AWSProvider::try_from(args),
+            _ => Err(DiscoverError::MalformedArgument(
+                format!("provider={}", args.provider()),
+                "you should not see this ...".to_string(),
+            )),
         }
     }
 }
@@ -137,7 +142,7 @@ impl AWSProvider {
         input.filters = Some(filters);
 
         debug!(
-            "Using region={:?} tag_key={:?} tag_value={:?} addr_type={:?}",
+            "Using region={:?} tag_key={} tag_value={} addr_type={:?}",
             self.region, self.tag_key, self.tag_value, self.addr_type
         );
 

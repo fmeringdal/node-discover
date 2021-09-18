@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::convert::TryFrom;
 use std::env;
 
-use crate::args::ParsedArgs;
+use crate::{args::ParsedArgs, SupportedProvider};
 
 use super::{DiscoverError, Provider};
 
@@ -85,15 +85,12 @@ impl TryFrom<Vec<String>> for DOProvider {
 
     fn try_from(value: Vec<String>) -> Result<Self, Self::Error> {
         let args = ParsedArgs::try_from(value)?;
-        match args.get("provider") {
-            None => Err(DiscoverError::MissingArgument("provider".into())),
-            Some(provider) => match &provider[..] {
-                "do" => DOProvider::try_from(args),
-                _ => Err(DiscoverError::MalformedArgument(
-                    format!("provider={}", provider),
-                    "you should not see this ...".to_string(),
-                )),
-            },
+        match *args.provider() {
+            SupportedProvider::DigitalOcean => DOProvider::try_from(args),
+            _ => Err(DiscoverError::MalformedArgument(
+                format!("provider={}", args.provider()),
+                "you should not see this ...".to_string(),
+            )),
         }
     }
 }

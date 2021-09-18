@@ -1,14 +1,25 @@
 use std::{
     collections::{hash_map::IntoIter, HashMap},
     convert::TryFrom,
+    fmt::Display,
 };
 
 use crate::errors::DiscoverError;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum SupportedProvider {
+    #[serde(rename = "aws")]
     AWS,
+    #[serde(rename = "digitalocean")]
     DigitalOcean,
+}
+
+impl Display for SupportedProvider {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let provider = serde_json::to_string(self).expect("To serialize supported provider name");
+        write!(f, "{}", provider)
+    }
 }
 
 /// A utility type for parsing and working with the CLI arguments
