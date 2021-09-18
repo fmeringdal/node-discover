@@ -1,5 +1,5 @@
 use log::error;
-use node_discover::{aws::AWSProvider, digitalocean::DOProvider, get_addresses, Provider};
+use node_discover::{get_addresses, Provider};
 
 const GLOBAL_HELP: &str = "The options for discovering ip addresses are provided as a
 single string value in \"key=value key=value ...\" format where
@@ -14,14 +14,22 @@ pub fn help(provider: &str) {
     println!("{}", GLOBAL_HELP);
     match provider {
         "aws" => {
-            println!("{}", AWSProvider::help());
+            // Only print AWS help if it is enabled
+            #[cfg(feature = "aws")]
+            {
+                return println!("{}", nettu_discover::aws::AWSProvider::help());
+            }
         }
         "digitalocean" => {
-            println!("{}", DOProvider::help());
+            // Only print DO help if it is enabled
+            #[cfg(feature = "digitalocean")]
+            {
+                return println!("{}", nettu_discover::digitalocean::DOProvider::help());
+            }
         }
         _ => {
-            println!("{}", AWSProvider::help());
-            println!("{}", DOProvider::help());
+            help("aws");
+            help("digitalocean");
         }
     }
 }
