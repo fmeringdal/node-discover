@@ -1,6 +1,5 @@
 use log::{debug, info};
-use rusoto_core::{HttpClient, Region};
-use rusoto_credential::ChainProvider;
+use rusoto_core::{credential::ChainProvider, HttpClient, Region};
 use rusoto_ec2::{DescribeInstancesRequest, DescribeInstancesResult, Ec2, Ec2Client, Filter};
 
 use std::{convert::TryFrom, str::FromStr};
