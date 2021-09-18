@@ -1,6 +1,6 @@
 //! Retrieve IP addresses of nodes from a provider.
 //!
-//! Query DO for droplets in region "lon1" and with tag "cool-tag"
+//! Query DigitalOcean for droplets in region "lon1" and with tag "cool-tag"
 //! ```rust no_run
 //! use node_discover::get_addresses;
 //!

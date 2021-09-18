@@ -32,7 +32,7 @@ async fn get_addrs(args: Vec<String>) {
     match res {
         Ok(addrs) => println!("{:?}", addrs),
         Err(e) => {
-            error!("Unable to retrieve addrs. Received error: {}", e);
+            error!("Unable to retrieve addresses. Received error: {}", e);
         }
     }
 }
@@ -61,6 +61,7 @@ fn get_help(args: Vec<String>) {
 async fn main() {
     env_logger::init();
 
+    // Collect args and skip the program name
     let mut args: Vec<_> = std::env::args().skip(1).collect();
 
     if args.is_empty() {
