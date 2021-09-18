@@ -26,7 +26,6 @@ impl Default for AddrType {
     }
 }
 
-// TODO: maybe just use serde instead
 impl TryFrom<String> for AddrType {
     type Error = DiscoverError;
 
