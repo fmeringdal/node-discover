@@ -60,7 +60,6 @@ impl TryFrom<ParsedArgs> for DOProvider {
                 "tag_name" => tag_name = Some(value),
                 "region" => region = Some(value),
                 "api_token" => api_token = Some(value),
-                "provider" => (),
                 _ => return Err(DiscoverError::UnexpectedArgument(key)),
             }
         }

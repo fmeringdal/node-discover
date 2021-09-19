@@ -69,7 +69,6 @@ impl TryFrom<ParsedArgs> for AWSProvider {
                     })?)
                 }
                 "addr_type" => addr_type = AddrType::try_from(value)?,
-                "provider" => (),
                 _ => return Err(DiscoverError::UnexpectedArgument(key)),
             }
         }

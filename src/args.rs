@@ -74,7 +74,7 @@ impl TryFrom<Vec<String>> for ParsedArgs {
         }
 
         let provider = args
-            .get("provider")
+            .remove("provider")
             .ok_or_else(|| DiscoverError::MissingArgument("provider".into()))?;
 
         // Format provider str to json so that we can use serde to find the SupportedProvider
